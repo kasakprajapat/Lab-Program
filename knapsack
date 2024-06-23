@@ -1,0 +1,66 @@
+//fractional KNAPSACK using greed approch
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct Item {
+    int value;
+    int weight;
+};
+
+// Comparator to sort items by value-to-weight ratio
+bool compare(Item a, Item b) {
+    double r1 = (double)a.value / a.weight;
+    double r2 = (double)b.value / b.weight;
+    return r1 > r2;
+}
+
+double fractionalKnapsack(int W, vector<Item> &items) {
+    // Sort items by value-to-weight ratio
+    sort(items.begin(), items.end(), compare);
+
+    int currentWeight = 0;
+    double finalValue = 0.0;
+
+    // Loop through all items
+    for (const auto &item : items) {
+        // If adding the whole item doesn't exceed capacity, add it
+        if (currentWeight + item.weight <= W) {
+            currentWeight += item.weight;
+            finalValue += item.value;
+        }
+        // Otherwise, take the fractional part of the item that fits
+        else {
+            int remain = W - currentWeight;
+            finalValue += item.value * ((double)remain / item.weight);
+            break;
+        }
+    }
+
+    return finalValue;
+}
+
+int main() {
+    int n, W;
+    cout << "Enter the number of items: ";
+    cin >> n;
+    cout << "Enter the capacity of the knapsack: ";
+    cin >> W;
+
+    vector<Item> items(n);
+    cout << "Enter the value and weight of each item:\n";
+    for (int i = 0; i < n; ++i) {
+        cout << "Item " << i + 1 << ":\n";
+        cout << "Value: ";
+        cin >> items[i].value;
+        cout << "Weight: ";
+        cin >> items[i].weight;
+    }
+
+    double maxValue = fractionalKnapsack(W, items);
+    cout << "Maximum value in Knapsack = " << maxValue << endl;
+
+    return 0;
+}
